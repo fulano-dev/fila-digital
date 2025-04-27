@@ -1,8 +1,6 @@
-// src/pages/WaitlistForm.js
 import React, { useState } from 'react';
 import Select from 'react-select';
 import { useNavigate, useLocation } from 'react-router-dom'; // useLocation para pegar os dados passados
-import axios from 'axios';
 import LayoutBackground from '../components/LayoutBackground';
 
 function WaitlistForm() {
@@ -65,8 +63,8 @@ function WaitlistForm() {
       margin: '20px 0',
     },
     logo: {
-      width: '100px',
-      height: '100px',
+      width: '150px',
+      height: '150px',
       objectFit: 'contain',
       marginBottom: '20px',
       border: `3px solid ${corTercearia}`, // Borda do logo com cor secundária
@@ -77,35 +75,45 @@ function WaitlistForm() {
       maxWidth: '400px',  // Ajustei o maxWidth para limitar a largura do formulário
       padding: '20px',
       backgroundColor: 'transparent',
-      borderRadius: '8px',
+      borderRadius: '12px',
     },
     input: {
-      width: '90%',
-      height: '30px',
-      padding: '10px',
-      minWidth: '350px !important',
+      width: '100%',
+      padding: '14px',
       marginBottom: '20px',
-      borderRadius: '4px',
-      border: `1px solid ${corSecundaria}`, // Borda com a cor secundária (igual ao botão)
+      borderRadius: '12px', // Borda arredondada
+      border: `2px solid ${corSecundaria}`, // Borda com a cor secundária
+      backgroundColor: '#f7f7f7', // Cor de fundo suave
+      fontSize: '16px',
+      color: corFonte,
+      transition: 'all 0.3s ease', // Transição suave ao focar
     },
     textarea: {
-      width: '90%',
-      padding: '10px',
+      width: '100%',
+      padding: '14px',
       marginBottom: '20px',
-      borderRadius: '4px',
-      border: `1px solid ${corSecundaria}`, // Borda com a cor secundária (igual ao botão)
-      height: '30px',
+      borderRadius: '12px', // Borda arredondada
+      border: `2px solid ${corSecundaria}`, // Borda com a cor secundária
+      backgroundColor: '#f7f7f7', // Cor de fundo suave
+      fontSize: '16px',
+      color: corFonte,
       resize: 'none',
+      transition: 'all 0.3s ease', // Transição suave ao focar
     },
     button: {
       width: '100%',
-      padding: '15px',
+      padding: '16px',
       backgroundColor: corSecundaria,
       color: corFonteSecundaria,
       border: 'none',
-      borderRadius: '4px',
-      fontSize: '16px',
+      borderRadius: '12px', // Bordas arredondadas
+      fontSize: '18px',
       cursor: 'pointer',
+      transition: 'all 0.3s ease', // Transição suave ao passar o mouse
+    },
+    buttonHover: {
+      backgroundColor: '#e67e22', // Cor um pouco mais forte ao passar o mouse
+      boxShadow: '0 6px 10px rgba(0, 0, 0, 0.2)', // Efeito de sombra mais forte
     },
     sectionTitle: {
       fontSize: '1.5rem',

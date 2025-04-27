@@ -53,7 +53,7 @@ function RestaurantDetails() {
 
   const corPrincipal = layoutConfig.CorPrincipal || '#3498db'; 
   const corSecundaria = layoutConfig.CorSecundaria || '#e67e22'; 
-  const corTercearia = layoutConfig.CorTercearia || '#2ecc71'; 
+  const corTerceira = layoutConfig.CorTercearia || '#2ecc71'; 
   const corNome = layoutConfig.CorNome || '#ffffff'; 
   const corFonte = layoutConfig.CorFonte || '#333333'; 
   const corFonteSecundaria = layoutConfig.FonteSecundaria || '#000000';
@@ -91,7 +91,7 @@ function RestaurantDetails() {
       height: '100px',
       objectFit: 'contain',
       marginBottom: '20px',
-      border: `3px solid ${corTercearia}`,
+      border: `3px solid ${corTerceira}`,
       boxShadow: '0 3px 5px rgba(0, 0, 0, 0.3)',
     },
     dropdown: {
@@ -135,7 +135,7 @@ function RestaurantDetails() {
       boxShadow: '0 10px 20px rgba(0, 0, 0, 0.1)',
       textAlign: 'center',
       transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-      border: `2px solid ${corTercearia}`,
+      border: `2px solid ${corTerceira}`,
     },
     listItemHover: {
       transform: 'scale(1.05)',
@@ -161,7 +161,7 @@ function RestaurantDetails() {
     <LayoutBackground 
       corPrincipal={corPrincipal}
       corSecundaria={corSecundaria}
-      corTercearia={corTercearia}
+      corTerceira={corTerceira}
       corNome={corNome}
       corFonte={corFonte}
       corFonteSecundaria={corFonteSecundaria}
@@ -174,7 +174,7 @@ function RestaurantDetails() {
         <LocationDropdown
         corPrincipal={corPrincipal}
         corSecundaria={corSecundaria}
-        corTercearia={corTercearia}
+        corTerceira={corTerceira}
         corNome={corNome}
         corFonte={corFonte}
         corFonteSecundaria={corFonteSecundaria}

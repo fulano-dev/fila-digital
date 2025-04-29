@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import Select from 'react-select';
-import { useNavigate, useLocation } from 'react-router-dom'; // useLocation para pegar os dados passados
+import { useNavigate, useLocation } from 'react-router-dom';
 import LayoutBackground from '../components/LayoutBackground';
+import axios from 'axios';
+import Select from 'react-select';
 
 function WaitlistForm() {
   const location = useLocation();
@@ -10,12 +11,61 @@ function WaitlistForm() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [observations, setObservations] = useState('');
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Usado para redirecionar o usuário para a tela de status
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ numberOfPeople, name, phone, observations });
-    navigate('/waitlist-confirmation'); // Redireciona para a confirmação
+
+    // Remove a máscara do telefone antes de enviar para o backend
+    const unmaskedPhone = phone.replace(/[^\d]/g, ''); // Remove a máscara
+    const formattedPhone = `+55${unmaskedPhone}`; // Adiciona o código do Brasil
+
+    const data = {
+      idFilial: branch.idFilial,
+      nome: name,
+      numeroWhatsapp: formattedPhone, // Envia o telefone com o código do Brasil
+      numeroPessoas: numberOfPeople,
+      comentario: observations
+    };
+
+    try {
+      // Enviar os dados para o backend
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/fila/entrar-fila`, data);
+
+      // Assumindo que a resposta tenha um campo 'queueId' que é o ID da fila
+      if (response.status === 201 && response.data.idFila) {
+        const queueId = response.data.idFila;
+
+        // Redireciona para a página de status, passando o 'queueId' para mostrar a posição na fila
+        
+        navigate(`/queue-status/${response.data.idFila}`, { state: { branch, restaurant, layoutConfig } });
+      } else {
+        // Se não houve sucesso, você pode mostrar uma mensagem de erro
+        alert('Não foi possível adicionar à fila. Tente novamente.');
+      }
+    } catch (error) {
+      console.error('Erro ao adicionar à fila:', error);
+      alert('Houve um erro ao tentar entrar na fila. Tente novamente.');
+    }
+  };
+
+  // Função para aplicar a máscara de telefone e limitar a quantidade de caracteres
+  const handlePhoneChange = (e) => {
+    let value = e.target.value;
+    value = value.replace(/\D/g, ''); // Remove caracteres não numéricos
+
+    // Limitar a 11 caracteres (DDD + 9 + 4 dígitos)
+    if (value.length > 11) {
+      value = value.slice(0, 11); // Limita para 11 caracteres
+    }
+
+    if (value.length <= 10) {
+      value = value.replace(/^(\d{2})(\d{0,5})(\d{0,4})$/, '($1) $2-$3');
+    } else {
+      value = value.replace(/^(\d{2})(\d{5})(\d{0,4})$/, '($1) $2-$3');
+    }
+
+    setPhone(value); // Atualiza o estado com o telefone formatado
   };
 
   if (!branch) {
@@ -85,7 +135,7 @@ function WaitlistForm() {
       border: `2px solid ${corSecundaria}`, // Borda com a cor secundária
       backgroundColor: '#f7f7f7', // Cor de fundo suave
       fontSize: '16px',
-      color: corFonte,
+      color: corFonteSecundaria,
       transition: 'all 0.3s ease', // Transição suave ao focar
     },
     textarea: {
@@ -96,7 +146,7 @@ function WaitlistForm() {
       border: `2px solid ${corSecundaria}`, // Borda com a cor secundária
       backgroundColor: '#f7f7f7', // Cor de fundo suave
       fontSize: '16px',
-      color: corFonte,
+      color: corFonteSecundaria,
       resize: 'none',
       transition: 'all 0.3s ease', // Transição suave ao focar
     },
@@ -188,7 +238,7 @@ function WaitlistForm() {
                 type="tel"
                 placeholder="Telefone"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={handlePhoneChange} // Usa a função handlePhoneChange
                 style={styles.input}
               />
               <textarea

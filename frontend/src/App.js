@@ -4,6 +4,8 @@ import { LayoutProvider, useLayout } from './context/LayoutContext'; // Importan
 import Home from './pages/Home';
 import RestaurantDetails from './pages/RestaurantDetails';
 import WaitlistForm from './pages/WaitlistForm';
+import QueueStatus from './pages/QueueStatus';
+
 
 function App() {
   return (
@@ -13,6 +15,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/:restaurantId" element={<RestaurantDetails />} />
           <Route path="/waitlist-form/:branchId" element={<WaitlistForm />} />
+          <Route path="/queue-status/:idFila" element={<QueueStatus />} />
+
+
         </Routes>
       </Router>
 

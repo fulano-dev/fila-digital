@@ -53,7 +53,7 @@ function RestaurantDetails() {
 
   const corPrincipal = layoutConfig.CorPrincipal || '#3498db'; 
   const corSecundaria = layoutConfig.CorSecundaria || '#e67e22'; 
-  const corTerceira = layoutConfig.CorTercearia || '#2ecc71'; 
+  const corTercearia = layoutConfig.CorTercearia || '#2ecc71'; 
   const corNome = layoutConfig.CorNome || '#ffffff'; 
   const corFonte = layoutConfig.CorFonte || '#333333'; 
   const corFonteSecundaria = layoutConfig.FonteSecundaria || '#000000';
@@ -81,17 +81,18 @@ function RestaurantDetails() {
       textShadow: 'none',
     },
     heading: {
-      margin: '20px 0',
       fontSize: '10vw',
       fontWeight: 'bold',
-      color: corNome
+      color: corNome,
+      textShadow: '2px 2px 10px rgba(0, 0, 0, 0.5)',
+      margin: '20px 0',
     },
     logo: {
-      width: '100px',
-      height: '100px',
+      width: '150px',
+      height: '150px',
       objectFit: 'contain',
       marginBottom: '20px',
-      border: `3px solid ${corTerceira}`,
+      border: `3px solid ${corTercearia}`, // Borda do logo com cor secundária
       boxShadow: '0 3px 5px rgba(0, 0, 0, 0.3)',
     },
     dropdown: {
@@ -135,7 +136,7 @@ function RestaurantDetails() {
       boxShadow: '0 10px 20px rgba(0, 0, 0, 0.1)',
       textAlign: 'center',
       transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-      border: `2px solid ${corTerceira}`,
+      border: `2px solid ${corTercearia}`,
     },
     listItemHover: {
       transform: 'scale(1.05)',
@@ -161,7 +162,7 @@ function RestaurantDetails() {
     <LayoutBackground 
       corPrincipal={corPrincipal}
       corSecundaria={corSecundaria}
-      corTerceira={corTerceira}
+      corTercearia={corTercearia}
       corNome={corNome}
       corFonte={corFonte}
       corFonteSecundaria={corFonteSecundaria}
@@ -174,7 +175,7 @@ function RestaurantDetails() {
         <LocationDropdown
         corPrincipal={corPrincipal}
         corSecundaria={corSecundaria}
-        corTerceira={corTerceira}
+        corTercearia={corTercearia}
         corNome={corNome}
         corFonte={corFonte}
         corFonteSecundaria={corFonteSecundaria}

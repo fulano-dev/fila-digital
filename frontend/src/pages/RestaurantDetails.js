@@ -22,9 +22,6 @@ function RestaurantDetails() {
       console.error('Erro ao buscar configurações de layout:', error);
     }
   };
-  useEffect(()  => {
-    console.log("Restaurant ID:", restaurantId);
-  },[]);
 
   useEffect(() => {
     if (idFilaStorge) {
@@ -47,7 +44,7 @@ function RestaurantDetails() {
         });
     }
   }
-  }, [restaurantId]);
+  }, []);
 
   // Filtrando as filiais com base na localização selecionada
   useEffect(() => {

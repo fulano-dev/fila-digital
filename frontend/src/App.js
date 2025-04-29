@@ -15,6 +15,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/:restaurantId" element={<RestaurantDetails />} />
           <Route path="/waitlist-form/:branchId" element={<WaitlistForm />} />
+          <Route path="/queue-status/" element={<QueueStatus />} />
           <Route path="/queue-status/:idFila" element={<QueueStatus />} />
 
 

@@ -44,7 +44,7 @@ const LocationDropdown = ({ locations, selectedLocation, onLocationChange, branc
     value: loc.idLocalizacao,
     label: loc.localizacao,
   }));
-
+  
   return (
     <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '20px 0' }}>
       <Select

@@ -35,6 +35,7 @@ function WaitlistForm() {
       // Assumindo que a resposta tenha um campo 'queueId' que é o ID da fila
       if (response.status === 201 && response.data.idFila) {
         const queueId = response.data.idFila;
+        localStorage.setItem('idFila', queueId);
 
         // Redireciona para a página de status, passando o 'queueId' para mostrar a posição na fila
         

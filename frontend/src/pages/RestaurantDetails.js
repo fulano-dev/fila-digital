@@ -12,6 +12,7 @@ function RestaurantDetails() {
   const [filteredBranches, setFilteredBranches] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState('');
   const [layoutConfig, setLayoutConfig] = useState({});
+    const [idFilaStorge, setIdFilaStorge] = useState(localStorage.getItem('idFila'));
 
   const fetchLayoutConfig = async (id) => {
     try {
@@ -23,6 +24,10 @@ function RestaurantDetails() {
   };
 
   useEffect(() => {
+    if (idFilaStorge) {
+      navigate(`/queue-status/${idFilaStorge}`);
+    } else {
+
     if (restaurantId) {
       fetchLayoutConfig(restaurantId);
 
@@ -38,6 +43,7 @@ function RestaurantDetails() {
           setFilteredBranches([]);
         });
     }
+  }
   }, [restaurantId]);
 
   // Filtrando as filiais com base na localização selecionada

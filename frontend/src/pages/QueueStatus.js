@@ -4,23 +4,36 @@ import axios from 'axios';
 import ProgressRing from '../components/ProgressRing';
 import LayoutBackground from '../components/LayoutBackground'; // Componente de LayoutBackground que vai manter o fundo e outras informações
 
+
 const QueueStatus = () => {
   const { idFila } = useParams(); // Obtém o ID da fila da URL
   const navigate = useNavigate();
 
   const [status, setStatus] = useState(null);
+  const [idFilaStorge, setIdFilaStorge] = useState(localStorage.getItem('idFila'));
   const [posicao, setPosicao] = useState(null);
   const [layoutConfig, setLayoutConfig] = useState(null); // Estado para armazenar as configurações de layout
 
   useEffect(() => {
-    fetchLayout(); // Chama a função para obter o layout
-    fetchPosition(); // Chama a função para obter a posição na fila
+   
+    if (idFilaStorge) {
+      // Se o idFila existir no localStorage, vai diretamente para a página de status da fila
+      fetchLayout(idFilaStorge); // Chama a função para obter o layout
+      fetchPosition(idFilaStorge);
+      navigate(`/queue-status/${idFilaStorge}`);
+    } else {
+      // Caso contrário, redireciona o usuário de volta para a página inicial ou outra página
+      navigate('/');
+    }
+  }, [navigate]);
+  useEffect(() => {
+     // Chama a função para obter a posição na fila
   }, []);
 
-  const fetchLayout = async () => {
+  const fetchLayout = async (idFilaStorge) => {
     try {
       // Faz a requisição para obter o layout e outras informações
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/fila/configs-fila/${idFila}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/fila/configs-fila/${idFilaStorge}`);
       setLayoutConfig(response.data.configsLayout); // Armazena os dados de layout recebidos
     } catch (error) {
       console.error("Erro ao obter layout", error);
@@ -30,11 +43,11 @@ const QueueStatus = () => {
   const fetchPosition = async () => {
     try {
       // Faz a requisição para obter a posição do cliente na fila
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/fila/posicao/${idFila}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/fila/posicao/${idFilaStorge}`);
       setPosicao(response.data.posicao);
       setStatus(response.data.status);
 
-      if (response.data.status === 'CHAMADO') {
+      if (response.data.status === 'Chamado') {
         // Atualize o estado ou faça algo quando o cliente for chamado
       }
     } catch (error) {
@@ -159,6 +172,14 @@ const QueueStatus = () => {
       alignItems: 'center',
     },
   };
+  const handleLeaveQueue = () => {
+    // Limpa o idFila do localStorage
+    localStorage.removeItem('idFila');
+  
+    // Redireciona o usuário para a página principal ou qualquer outra página desejada
+    navigate(`/${layoutConfig?.idFilial}`);
+  };
+  
 
   return (
     <LayoutBackground corPrincipal={status !== 'Chamado' ? corPrincipal : corStatusVerde }
@@ -206,7 +227,7 @@ const QueueStatus = () => {
         </div>
 
         <button 
-          onClick={() => navigate('/')} 
+          onClick={handleLeaveQueue} 
           style={styles.button}
           
         >

@@ -241,6 +241,7 @@ exports.layoutsFiial = async (req, res) => {
                     f.idFilial,
                     f.NomeFilial,
                     r.NomeDoRestaurante,
+                    r.idRestaurante,
                     r.FotoUrl,
                     r.LogoUrl,
                     c.CorPrincipal,

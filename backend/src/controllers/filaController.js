@@ -1,5 +1,29 @@
+const twilio = require('twilio');
 
 const db = require('../models/db'); // Arquivo que exporta a conexão com o banco
+
+const client = twilio(
+    process.env.TWILIO_ACCOUNT_SID,
+    process.env.TWILIO_AUTH_TOKEN
+  );
+// Função para enviar WhatsApp
+const enviarMensagemWhatsApp = async (cliente, restaurante, filial) => {
+  const { numeroWhatsapp } = cliente;  // Número do WhatsApp do cliente
+  const mensagem = `Olá ${cliente.nome}, você foi adicionado à fila do restaurante ${restaurante.NomeDoRestaurante} na filial ${filial.NomeFilial}. Acesse sua posição através deste link: ${process.env.FRONTEND_URL}/queue-status/${cliente.idFila}`;
+
+  try {
+    await twilioClient.messages.create({
+      body: mensagem,
+      from: 'whatsapp:+15557608635',  // Número do Twilio para envio
+      to: `whatsapp:${numeroWhatsapp}` // Número de telefone do cliente com o prefixo "whatsapp:"
+    });
+
+    console.log('Mensagem enviada com sucesso!');
+  } catch (error) {
+    console.error('Erro ao enviar mensagem:', error);
+  }
+};
+
 
 // Função para atualizar a posição na fila após alterações
 async function atualizarPosicaoFila(connection, idFilial) {
@@ -24,37 +48,44 @@ async function atualizarPosicaoFila(connection, idFilial) {
 // Função para adicionar cliente à fila
 exports.entrarFila = async (req, res) => {
     const { idFilial, nome, numeroWhatsapp, numeroPessoas, comentario } = req.body;
-
+  console.log('Chegou aqui')
     const connection = await db.getConnection();
     try {
-        await connection.beginTransaction();
-        
-        const cleanNumeroWhatsapp = numeroWhatsapp ? numeroWhatsapp.replace(/[^\d]/g, '') : null;
-        
-        // Inserir cliente na tabela Cliente
-        const insertClienteQuery = 'INSERT INTO TabelaCliente (Nome, NumeroWhatsApp, Preferencial, NumeroPessoas, Comentario, Chamado) VALUES (?, ?, ?, ?, ?, "NA FILA")';
-        const [resultCliente] = await connection.execute(insertClienteQuery, [nome, cleanNumeroWhatsapp, 0, numeroPessoas, comentario]);
-
-        const idCliente = resultCliente.insertId;
-        
-        // Inserir cliente na fila (sem StatusFila)
-        const insertFilaQuery = 'INSERT INTO TabelaFila (idFilial, idCliente, PosicaoFila, HorarioEntrada) VALUES (?, ?, ?, NOW())';
-        const [resultFila] = await connection.execute(insertFilaQuery, [idFilial, idCliente, 0]);
-        
-        // Atualizar posições na fila após inserção
-        await atualizarPosicaoFila(connection, idFilial);
-        
-        await connection.commit();
-        
-        res.status(201).json({ message: 'Cliente adicionado à fila com sucesso!', idFila: resultFila.insertId });
+      await connection.beginTransaction();
+      
+      const cleanNumeroWhatsapp = numeroWhatsapp ? numeroWhatsapp.replace(/[^\d]/g, '') : null;
+      
+      // Inserir cliente na tabela Cliente
+      const insertClienteQuery = 'INSERT INTO TabelaCliente (Nome, NumeroWhatsApp, Preferencial, NumeroPessoas, Comentario, Chamado) VALUES (?, ?, ?, ?, ?, "NA FILA")';
+      const [resultCliente] = await connection.execute(insertClienteQuery, [nome, cleanNumeroWhatsapp, 0, numeroPessoas, comentario]);
+  
+      const idCliente = resultCliente.insertId;
+      
+      // Inserir cliente na fila (sem StatusFila)
+      const insertFilaQuery = 'INSERT INTO TabelaFila (idFilial, idCliente, PosicaoFila, HorarioEntrada, Status) VALUES (?, ?, ?, NOW(), 0)';
+      const [resultFila] = await connection.execute(insertFilaQuery, [idFilial, idCliente, 0]);
+      
+      // Atualizar posições na fila após inserção
+      await atualizarPosicaoFila(connection, idFilial);  // Chama a função que atualiza a posição na fila
+  
+      // Agora, obtenha os dados do restaurante e filial para enviar o WhatsApp
+      const [restauranteData] = await connection.execute('SELECT * FROM TabelaRestaurante WHERE idRestaurante = ?', [idFilial]);
+      const [filialData] = await connection.execute('SELECT * FROM TabelaFilial WHERE idFilial = ?', [idFilial]);
+  
+      // Enviar a mensagem via Twilio
+      await enviarMensagemWhatsApp(resultCliente, restauranteData[0], filialData[0]);
+  
+      await connection.commit();
+      
+      res.status(201).json({ message: 'Cliente adicionado à fila com sucesso!', idFila: resultFila.insertId });
     } catch (error) {
-        await connection.rollback();
-        console.error(error);
-        res.status(500).json({ error: 'Erro ao adicionar cliente à fila' });
+      await connection.rollback();
+      console.error(error);
+      res.status(500).json({ error: 'Erro ao adicionar cliente à fila' });
     } finally {
-        connection.release();
+      connection.release();
     }
-};
+  };
 
 // Função para chamar o próximo cliente
 // Função para chamar o próximo cliente
